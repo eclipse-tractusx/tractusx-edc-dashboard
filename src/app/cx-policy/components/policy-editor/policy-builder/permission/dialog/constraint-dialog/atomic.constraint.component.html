@@ -29,6 +29,7 @@ SPDX-License-Identifier: Apache-2.0
     <select
       class="select select-bordered w-full"
       [(ngModel)]="constraint.selectedOperator"
+      (change)="onOperatorChange()"
       [disabled]="constraint.operator.length === 1"
     >
       @for (operator of constraint.operator; track operator) {
@@ -38,9 +39,7 @@ SPDX-License-Identifier: Apache-2.0
   </fieldset>
   <fieldset class="fieldset w-5xl bg-base-300 border border-base-300 p-4 rounded-box" [formGroup]="form">
     <legend class="fieldset-legend text-sm justify-start w-full">Right Operand</legend>
-    @if (rightOperand) {
-      <app-right-operand [rightOperand]="rightOperand" [parentFormGroup]="form"></app-right-operand>
-    } @else if (rightOperands) {
+    @if (isArrayOperator()) {
       @for (item of rightOperands; let i = $index; track item) {
         <app-right-operand
           [rightOperand]="item"
@@ -56,6 +55,12 @@ SPDX-License-Identifier: Apache-2.0
         <span class="material-symbols-rounded">add</span>
         Add
       </button>
+    } @else if (rightOperand) {
+      <app-right-operand
+        [rightOperand]="rightOperand"
+        [parentFormGroup]="form"
+        [selectTypes]="getRightOperands()"
+      ></app-right-operand>
     }
   </fieldset>
 

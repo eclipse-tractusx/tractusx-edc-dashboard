@@ -19,10 +19,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AtomicConstraint, camelCaseToWords, RightOperand } from '../../../../../../models/policy';
+import { AtomicConstraint, camelCaseToWords, Operator, RightOperand } from '../../../../../../models/policy';
 import { RightOperandComponent } from './right-operand.component';
+import { DeleteConfirmComponent, ModalAndAlertService } from '@eclipse-edc/dashboard-core';
 
 @Component({
   selector: 'app-atomic-constraint',
@@ -31,25 +32,66 @@ import { RightOperandComponent } from './right-operand.component';
   standalone: true,
   imports: [FormsModule, RightOperandComponent, ReactiveFormsModule],
 })
-export class AtomicConstraintComponent implements OnInit {
+export class AtomicConstraintComponent implements OnChanges {
+  private readonly arrayOperators: Operator[] = [Operator.IsAllOf, Operator.IsAnyOf, Operator.IsNoneOf];
+  private readonly modalService = inject(ModalAndAlertService);
+
   @Input() constraint!: AtomicConstraint;
   rightOperand?: RightOperand;
   rightOperands?: RightOperand[];
+  selectedOperator: Operator = Operator.Eq;
 
   form = new FormGroup({});
 
   @Output() save = new EventEmitter<AtomicConstraint>();
 
-  ngOnInit() {
+  ngOnChanges() {
+    this.selectedOperator = this.constraint.selectedOperator;
     if (Array.isArray(this.constraint.rightOperandValue)) {
-      this.rightOperands = this.constraint.rightOperandValue;
+      if (this.isArrayOperator()) {
+        this.rightOperands = this.constraint.rightOperandValue;
+      } else {
+        this.rightOperand = this.constraint.rightOperandValue[0];
+      }
     } else {
       this.rightOperand = this.constraint.rightOperandValue;
     }
   }
 
-  getRightOperands(): RightOperand[] {
-    return this.constraint.rightOperand as RightOperand[];
+  isArrayOperator(op?: Operator): boolean {
+    return this.arrayOperators.includes(op ?? this.selectedOperator);
+  }
+
+  onOperatorChange() {
+    console.log('test');
+    if (this.isArrayOperator() && !this.isArrayOperator(this.constraint.selectedOperator) && this.rightOperands) {
+      const resetToSingleItem = () => {
+        this.rightOperand = this.rightOperands![0];
+        this.rightOperands = undefined;
+        this.selectedOperator = this.constraint.selectedOperator;
+      }
+      if (this.rightOperands.length > 1) {
+        this.modalService.openModal(DeleteConfirmComponent, {
+          customText: 'All right operands except the first will be deleted.'
+        }, {
+          canceled: () => {
+            this.constraint.selectedOperator = this.selectedOperator;
+            this.modalService.closeModal();
+          },
+          confirm: resetToSingleItem
+        })
+      } else {
+        resetToSingleItem();
+      }
+    } else if (!this.isArrayOperator() && this.isArrayOperator(this.constraint.selectedOperator) && this.rightOperand) {
+      this.rightOperands = [structuredClone(this.rightOperand)];
+      this.rightOperand = undefined;
+      this.selectedOperator = this.constraint.selectedOperator;
+    }
+  }
+
+  getRightOperands(): RightOperand[] | undefined {
+    return Array.isArray(this.constraint.rightOperand) ? this.constraint.rightOperand : undefined;
   }
 
   onRightOperandChange(op: RightOperand, index: number) {
