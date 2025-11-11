@@ -1,0 +1,13 @@
+{
+  "healthCheckIntervalSeconds": 60,
+  "enableUserConfig": false,
+  "appTitle": "Catena-X Policy Builder",
+  "menuItems": [
+    {
+      "text": "Policy Builder",
+      "materialSymbol": "build",
+      "routerPath": "",
+      "viewDescription": "Catena-X ODRL Policy Builder"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+<!--
+Copyright (c) 2025 Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V.
+
+See the NOTICE file(s) distributed with this work for additional
+information regarding copyright ownership.
+
+This program and the accompanying materials are made available under the
+terms of the Apache License, Version 2.0 which is available at
+https://www.apache.org/licenses/LICENSE-2.0.
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations
+under the License.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
+<div class="flex flex-col bg-base-100 rounded-2xl p-4 h-full">
+  <div class="w-full flex">
+    <label class="input flex-1">
+      <span class="label">Name</span>
+      <input type="text" placeholder="Permission name" [(ngModel)]="permission.name" />
+    </label>
+    <div class="dropdown dropdown-end ml-4">
+      <button tabindex="0" class="btn btn-soft btn-primary" title="Add constraint">
+        <span class="material-symbols-rounded">add</span>
+        Add Constraint
+      </button>
+      <ul
+        tabindex="0"
+        class="dropdown-content menu shadow-2xl bg-base-300 rounded-2xl flex-nowrap overflow-y-auto max-h-[50vh]"
+      >
+        @for (constraint of constraints; track constraint) {
+          <li (click)="addConstraint(constraint.clone())">
+            <a class="truncate">{{ camelCaseToWords(constraint.leftOperand) }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider m-0 my-4"><span class="opacity-80">Constraints</span></div>
+
+  <div class="flex flex-col gap-3 mx-4 [&>div]:last:border-none">
+    @for (constraint of permission.constraints; track constraint) {
+      <div class="w-full flex flex-wrap items-center gap-4 border-b-2 border-b-base-content/10 pb-3">
+        <div class="flex flex-col flex-1">
+          <div class="text-xs font-normal opacity-60">Atomic Constraint</div>
+          <!--          <div class="text-xs font-normal opacity-60">-->
+          <!--            {{ constraint.constructor.name.slice(1).replace('Con', ' Con') }}-->
+          <!--          </div>-->
+          <div class="text-md font-normal">{{ constraint.toString().replace('Constraint ', '') }}</div>
+        </div>
+        @if (getConstraintType(constraint) === 'atomic') {
+          <button class="btn btn-sm btn-square btn-soft btn-secondary" (click)="editConstraint(constraint)">
+            <span class="material-symbols-rounded !text-[1.2rem]">edit</span>
+          </button>
+        } @else {
+          <div class="dropdown dropdown-end ml-4">
+            <button tabindex="0" class="btn btn-soft btn-square btn-sm btn-primary" title="Add constraint">
+              <span class="material-symbols-rounded">add</span>
+            </button>
+            <ul
+              tabindex="0"
+              class="dropdown-content menu shadow-2xl bg-base-300 rounded-2xl flex-nowrap overflow-y-auto"
+            >
+              @for (atomic of constraints; track atomic) {
+                <li (click)="addConstraint(atomic.clone(), constraint)">
+                  <a class="truncate">{{ atomic.leftOperand }}</a>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+        <button class="btn btn-sm btn-square btn-soft btn-error" (click)="deleteConstraint(constraint)">
+          <span class="material-symbols-rounded !text-[1.2rem]">delete</span>
+        </button>
+        @if (getConstraintType(constraint) === 'logical') {
+          <div class="w-full border-l-base-content/10 border-l-1 ml-2 -mt-3">
+            @for (subconstraint of getSubConstraints(constraint); track subconstraint) {
+              <div class="w-full px-4 flex gap-4 items-center my-2">
+                <div class="flex flex-col flex-1">
+                  <div class="text-xs font-normal opacity-60">
+                    {{ subconstraint.constructor.name.slice(1).replace('Con', ' Con') }}
+                  </div>
+                  <div class="text-md font-normal">{{ subconstraint.toString().replace('Constraint ', '') }}</div>
+                </div>
+                <button
+                  class="btn btn-sm btn-square btn-soft btn-secondary"
+                  (click)="editConstraint(subconstraint, false, constraint)"
+                >
+                  <span class="material-symbols-rounded !text-[1.2rem]">edit</span>
+                </button>
+                <button
+                  class="btn btn-sm btn-square btn-soft btn-error"
+                  (click)="deleteConstraint(subconstraint, constraint)"
+                >
+                  <span class="material-symbols-rounded !text-[1.2rem]">delete</span>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

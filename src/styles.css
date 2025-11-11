@@ -1,0 +1,121 @@
+/*
+ *  Copyright (c) 2025 Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V.
+ *
+ *  See the NOTICE file(s) distributed with this work for additional
+ *  information regarding copyright ownership.
+ *
+ *  This program and the accompanying materials are made available under the
+ *  terms of the Apache License, Version 2.0 which is available at
+ *  https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  License for the specific language governing permissions and limitations
+ *  under the License.
+ *
+ *  SPDX-License-Identifier: Apache-2.0
+ */
+
+@import 'tailwindcss';
+@import 'material-symbols/rounded.css';
+@source '../eclipse-edc/DataDashboard/projects/dashboard-core/**/*.html';
+@plugin 'daisyui' {
+  themes: catena-x-dark, catena-x-light;
+}
+
+@plugin "daisyui/theme" {
+  name: 'Dark';
+  default: false;
+  prefersdark: true;
+  color-scheme: 'dark';
+  --color-base-100: oklch(25.857% 0.023 264.149);
+  --color-base-200: oklch(23.036% 0.019 264.182);
+  --color-base-300: oklch(21.346% 0.018 262.177);
+  --color-base-content: oklch(82.901% 0.031 222.959);
+  --color-primary: #ffa600;
+  --color-primary-content: oklch(17.226% 0.028 139.549);
+  --color-secondary: #b3cb2d;
+  --color-secondary-content: oklch(14.675% 0.033 35.353);
+  --color-accent: oklch(74.229% 0.133 311.379);
+  --color-accent-content: oklch(14.845% 0.026 311.379);
+  --color-neutral: oklch(19.731% 0.02 264.094);
+  --color-neutral-content: oklch(82.901% 0.031 222.959);
+  --color-info: oklch(86.078% 0.142 206.182);
+  --color-info-content: oklch(17.215% 0.028 206.182);
+  --color-success: #b3cb2d;
+  --color-success-content: oklch(14.675% 0.033 35.353);
+  --color-warning: oklch(86.163% 0.142 94.818);
+  --color-warning-content: oklch(17.232% 0.028 94.818);
+  --color-error: oklch(82.418% 0.099 33.756);
+  --color-error-content: oklch(16.483% 0.019 33.756);
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: 'Light';
+  default: true;
+  prefersdark: false;
+  color-scheme: 'light';
+  --color-base-100: #f0f0f0;
+  --color-base-200: oklch(100% 0 0);
+  --color-base-300: oklch(100% 0 0);
+  --color-base-content: oklch(20% 0 0);
+  --color-primary: #ffa600;
+  --color-primary-content: oklch(26% 0 0);
+  --color-secondary: #b3cb2d;
+  --color-secondary-content: oklch(26% 0 0);
+  --color-accent: oklch(87% 0 0);
+  --color-accent-content: oklch(26% 0 0);
+  --color-neutral: oklch(100% 0 0);
+  --color-neutral-content: oklch(26% 0 0);
+  --color-info: oklch(44% 0.11 240.79);
+  --color-info-content: oklch(90% 0.058 230.902);
+  --color-success: #b3cb2d;
+  --color-success-content: oklch(26% 0 0);
+  --color-warning: oklch(47% 0.137 46.201);
+  --color-warning-content: oklch(92% 0.12 95.746);
+  --color-error: oklch(44% 0.177 26.899);
+  --color-error-content: oklch(88% 0.062 18.334);
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+* {
+  scrollbar-width: thin !important;
+}
+
+*::-webkit-scrollbar * {
+  width: 3px !important;
+}

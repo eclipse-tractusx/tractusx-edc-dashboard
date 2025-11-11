@@ -1,0 +1,15 @@
+# Node dependencies (already installed inside the container)
+node_modules
+
+# backend
+cx-policy-validator
+
+# Angular build output (except during multi-stage builds)
+dist
+
+# Editor & OS-specific files
+.vscode
+.idea
+
+# Git-related files
+.git

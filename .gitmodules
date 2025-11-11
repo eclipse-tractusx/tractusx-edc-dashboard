@@ -1,0 +1,3 @@
+[submodule "eclipse-edc/DataDashboard"]
+	path = eclipse-edc/DataDashboard
+	url = git@github.com:eclipse-edc/DataDashboard.git

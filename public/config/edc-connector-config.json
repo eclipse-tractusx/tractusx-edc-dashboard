@@ -1,0 +1,9 @@
+[
+  {
+    "connectorName": "Validator",
+    "managementUrl": "http://localhost:8010/management",
+    "defaultUrl": "http://localhost:8000/api",
+    "protocolUrl": "https://localhost:8020/protocol",
+    "federatedCatalogEnabled": false
+  }
+]
