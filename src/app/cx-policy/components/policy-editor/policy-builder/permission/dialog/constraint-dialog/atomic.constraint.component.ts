@@ -19,11 +19,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Component, EventEmitter, inject, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AtomicConstraint, camelCaseToWords, Operator, RightOperand } from '../../../../../../models/policy';
 import { RightOperandComponent } from './right-operand.component';
-import { DeleteConfirmComponent, ModalAndAlertService } from '@eclipse-edc/dashboard-core';
 
 @Component({
   selector: 'app-atomic-constraint',
@@ -34,12 +33,12 @@ import { DeleteConfirmComponent, ModalAndAlertService } from '@eclipse-edc/dashb
 })
 export class AtomicConstraintComponent implements OnChanges {
   private readonly arrayOperators: Operator[] = [Operator.IsAllOf, Operator.IsAnyOf, Operator.IsNoneOf];
-  private readonly modalService = inject(ModalAndAlertService);
 
   @Input() constraint!: AtomicConstraint;
   rightOperand?: RightOperand;
   rightOperands?: RightOperand[];
   selectedOperator: Operator = Operator.Eq;
+  operatorWarning = false;
 
   form = new FormGroup({});
 
@@ -62,31 +61,41 @@ export class AtomicConstraintComponent implements OnChanges {
     return this.arrayOperators.includes(op ?? this.selectedOperator);
   }
 
-  onOperatorChange() {
-    console.log('test');
-    if (this.isArrayOperator() && !this.isArrayOperator(this.constraint.selectedOperator) && this.rightOperands) {
-      const resetToSingleItem = () => {
-        this.rightOperand = this.rightOperands![0];
-        this.rightOperands = undefined;
-        this.selectedOperator = this.constraint.selectedOperator;
-      }
-      if (this.rightOperands.length > 1) {
-        this.modalService.openModal(DeleteConfirmComponent, {
-          customText: 'All right operands except the first will be deleted.'
-        }, {
-          canceled: () => {
-            this.constraint.selectedOperator = this.selectedOperator;
-            this.modalService.closeModal();
-          },
-          confirm: resetToSingleItem
-        })
-      } else {
-        resetToSingleItem();
-      }
-    } else if (!this.isArrayOperator() && this.isArrayOperator(this.constraint.selectedOperator) && this.rightOperand) {
+  resetToSingleItem(): void {
+    if (this.rightOperands?.[0]) {
+      this.rightOperand = this.rightOperands[0];
+      this.rightOperands = undefined;
+      this.selectedOperator = this.constraint.selectedOperator;
+      this.operatorWarning = false;
+    } else {
+      throw new Error('rightOperands must contain at least one element.');
+    }
+  }
+
+  resetToArray(): void {
+    if (this.rightOperand) {
       this.rightOperands = [structuredClone(this.rightOperand)];
       this.rightOperand = undefined;
       this.selectedOperator = this.constraint.selectedOperator;
+    } else {
+      throw new Error('rightOperand can not be undefined.');
+    }
+  }
+
+  revertOperatorSelection(): void {
+    this.constraint.selectedOperator = this.selectedOperator;
+    this.operatorWarning = false;
+  }
+
+  onOperatorChange() {
+    if (this.isArrayOperator() && !this.isArrayOperator(this.constraint.selectedOperator) && this.rightOperands) {
+      if (this.rightOperands.length > 1) {
+        this.operatorWarning = true;
+      } else {
+        this.resetToSingleItem();
+      }
+    } else if (!this.isArrayOperator() && this.isArrayOperator(this.constraint.selectedOperator) && this.rightOperand) {
+      this.resetToArray();
     }
   }
 

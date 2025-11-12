@@ -26,16 +26,31 @@ SPDX-License-Identifier: Apache-2.0
   </fieldset>
   <fieldset class="fieldset bg-base-300 border-base-300 rounded-box w-5xl border p-4">
     <legend class="fieldset-legend text-sm justify-start w-full"><span>Operator</span></legend>
-    <select
-      class="select select-bordered w-full"
-      [(ngModel)]="constraint.selectedOperator"
-      (change)="onOperatorChange()"
-      [disabled]="constraint.operator.length === 1"
-    >
-      @for (operator of constraint.operator; track operator) {
-        <option [value]="operator">{{ camelCaseToWords(operator, true) }}</option>
-      }
-    </select>
+    @if (operatorWarning) {
+      <div role="alert" class="alert alert-warning alert-horizontal">
+        <span class="material-symbols-rounded !text-3xl">warning</span>
+        <div>
+          <span>All right operands except the first will be deleted!</span>
+        </div>
+        <div>
+          <button type="button" class="btn btn-sm btn-outline hover:btn-error" (click)="resetToSingleItem()">
+            Accept
+          </button>
+          <button type="button" class="btn btn-sm ml-3" (click)="revertOperatorSelection()">Cancel</button>
+        </div>
+      </div>
+    } @else {
+      <select
+        class="select select-bordered w-full"
+        [(ngModel)]="constraint.selectedOperator"
+        (change)="onOperatorChange()"
+        [disabled]="constraint.operator.length === 1"
+      >
+        @for (operator of constraint.operator; track operator) {
+          <option [value]="operator">{{ camelCaseToWords(operator, true) }}</option>
+        }
+      </select>
+    }
   </fieldset>
   <fieldset class="fieldset w-5xl bg-base-300 border border-base-300 p-4 rounded-box" [formGroup]="form">
     <legend class="fieldset-legend text-sm justify-start w-full">Right Operand</legend>
