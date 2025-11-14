@@ -1314,6 +1314,22 @@ export class PolicyTemplates {
     });
   }
 
+  static AccessTemplate(): PolicyConfiguration {
+    const template = new PolicyConfiguration('Access Template');
+    const permission = new Permission();
+    permission.name = 'Access Permission';
+    permission.action = Action.Access;
+    template.policy.permissions.push(permission);
+    template.policy.type = Action.Access;
+    return template;
+  }
+
+  static UsageTemplate(): PolicyConfiguration {
+    const template = new PolicyConfiguration('Usage Template');
+    this._addAgreementAndPurpose([template]);
+    return template;
+  }
+
   static UsageTemplates(): PolicyConfiguration[] {
     const permissions = RuleSets.UsagePermissions().map((constraint: Constraint) => {
       const atomic = constraint as AtomicConstraint;
