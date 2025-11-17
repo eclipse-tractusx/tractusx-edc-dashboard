@@ -19,29 +19,36 @@ SPDX-License-Identifier: Apache-2.0
 
 <div class="grid gap-4 grid-cols-1 xl:grid-cols-3 xl:grid-rows-[auto_1fr] h-full">
   <div class="flex justify-center items-center xl:col-span-2 xl:row-span-1 bg-base-300 rounded-2xl shadow-xl p-4">
-    <label class="select w-full">
-      <span class="label">Select Policy Type</span>
-      <select class="select w-full" [(ngModel)]="policyType" (ngModelChange)="onTypeChange($event)">
-        <option [value]="Action.Access">Access Policy</option>
-        <option [value]="Action.Use">Usage Policy</option>
-      </select>
-    </label>
+    @if (templateWarning) {
+      <div role="alert" class="alert alert-warning alert-horizontal w-full">
+        <span class="material-symbols-rounded !text-3xl">warning</span>
+        <div>
+          <span>All changes to your policy will be deleted!</span>
+        </div>
+        <div>
+          <button type="button" class="btn btn-sm btn-outline hover:btn-error" (click)="acceptTypeChange()">
+            Accept
+          </button>
+          <button type="button" class="btn btn-sm ml-3" (click)="cancelTypeChange()">Cancel</button>
+        </div>
+      </div>
+    } @else {
+      <label class="select w-full">
+        <span class="label">Select Policy Type</span>
+        <select class="select w-full" [(ngModel)]="selectedPolicyType" (ngModelChange)="onTypeChange()">
+          <option [value]="Action.Access">Access Policy</option>
+          <option [value]="Action.Use">Usage Policy</option>
+        </select>
+      </label>
+    }
   </div>
 
   <div class="xl:col-span-2 xl:row-span-1 bg-base-300 rounded-2xl shadow-xl overflow-y-auto">
-    <div class="w-full h-full grid grid-cols-1 grid-rows-[auto_1fr] gap-4 p-4 pb-0">
-      <label class="select w-full">
-        <span class="label">Select Policy Template</span>
-        <select class="select w-full" [(ngModel)]="currentTemplate" (ngModelChange)="onConfigSelectionChange($event)">
-          @for (template of templates; track template.policy) {
-            <option [ngValue]="template">{{ template.name }}</option>
-          }
-        </select>
-      </label>
+    <div class="w-full h-full grid grid-cols-1 grid-rows-1 gap-4 p-4 pb-0">
       <app-policy-builder
         class="h-full"
         (policyChange)="onConfigChange($event)"
-        [policyConfig]="currentTemplate"
+        [policyConfig]="template"
       ></app-policy-builder>
     </div>
   </div>

@@ -55,10 +55,11 @@ export class PolicyEditorComponent implements OnInit, OnDestroy {
 
   outputFormats: string[];
   policyType: Action = Action.Use;
-  templates: PolicyConfiguration[];
+  selectedPolicyType: Action = Action.Use;
+  template: PolicyConfiguration;
+  templateWarning = false;
 
   currentFormat: OutputKind;
-  currentTemplate: PolicyConfiguration;
 
   showLegalText = true;
   legalTextKinds: string[] = [];
@@ -76,9 +77,8 @@ export class PolicyEditorComponent implements OnInit, OnDestroy {
     private http: HttpClient,
   ) {
     this.currentFormat = OutputKind.Plain;
-    this.templates = PolicyTemplates.UsageTemplates();
+    this.template = PolicyTemplates.UsageTemplate();
     this.updateLegalTextKinds(Action.Use);
-    this.currentTemplate = this.templates[0];
     this.outputFormats = policyService.supportedOutput();
 
     stateService.currentEdcConfig$
@@ -99,7 +99,7 @@ export class PolicyEditorComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    await this.updateJsonText(this.currentTemplate, this.currentFormat);
+    await this.updateJsonText(this.template, this.currentFormat);
   }
 
   updateLegalTextKinds(type: Action) {
@@ -110,16 +110,47 @@ export class PolicyEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onTypeChange(type: Action) {
+  private isSamePolicy(a: PolicyConfiguration, b: PolicyConfiguration): boolean {
+    return (
+      this.formatService.formatPolicy(this.formatService.toJsonLd(a, this.currentFormat)) ===
+      this.formatService.formatPolicy(this.formatService.toJsonLd(b, this.currentFormat))
+    );
+  }
+
+  private async switchPolicyType(type: Action): Promise<void> {
     this.policyType = type;
     if (type === Action.Use) {
-      this.templates = PolicyTemplates.UsageTemplates();
+      this.template = PolicyTemplates.UsageTemplate();
     } else {
-      this.templates = PolicyTemplates.AccessTemplates();
+      this.template = PolicyTemplates.AccessTemplate();
     }
-    this.currentTemplate = this.templates[0];
     this.updateLegalTextKinds(type);
-    await this.updateJsonText(this.currentTemplate, this.currentFormat);
+    await this.updateJsonText(this.template, this.currentFormat);
+  }
+
+  cancelTypeChange(): void {
+    this.selectedPolicyType = this.policyType;
+    this.templateWarning = false;
+  }
+
+  async acceptTypeChange(): Promise<void> {
+    await this.switchPolicyType(this.selectedPolicyType);
+    this.templateWarning = false;
+  }
+
+  async onTypeChange() {
+    if (this.selectedPolicyType !== this.policyType) {
+      if (
+        this.isSamePolicy(
+          this.template,
+          this.policyType === Action.Use ? PolicyTemplates.UsageTemplate() : PolicyTemplates.AccessTemplate(),
+        )
+      ) {
+        await this.switchPolicyType(this.selectedPolicyType);
+      } else {
+        this.templateWarning = true;
+      }
+    }
   }
 
   async onConfigSelectionChange(cfg: PolicyConfiguration) {
@@ -164,7 +195,7 @@ export class PolicyEditorComponent implements OnInit, OnDestroy {
   }
 
   getPolicyPermission(kind: string): Permission[] {
-    return this.currentTemplate.policy[kind as keyof Policy] as Permission[];
+    return this.template.policy[kind as keyof Policy] as Permission[];
   }
 
   getAtomicConstraints(list: Constraint[]) {
