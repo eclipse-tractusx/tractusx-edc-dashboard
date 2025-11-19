@@ -18,10 +18,10 @@
  */
 
 group = "de.fraunhofer.isst.dst.cx.validator"
-version = "0.0.1"
+version = "0.0.2"
 
-val edcVersion = "0.14.0"
-val txVersion = "0.11.0-RC3"
+val edcVersion = "0.14.1"
+val txVersion = "0.11.1"
 
 
 plugins {
