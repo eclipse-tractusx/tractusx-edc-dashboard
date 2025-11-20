@@ -1,5 +1,6 @@
 # #############################################################################
 # Copyright (c) 2025 Contributors to the Eclipse Foundation
+# Copyright (c) 2025 Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V.
 #
 # See the NOTICE file(s) distributed with this work for additional
 # information regarding copyright ownership.
@@ -18,7 +19,7 @@
 # #############################################################################
 ---
 
-name: "3rd Party dependency check (Eclipse Dash)"
+name: "Frontend - 3rd Party dependency check (Eclipse Dash)"
 
 on:
   workflow_dispatch:
@@ -33,17 +34,19 @@ permissions:
   contents: write
 
 jobs:
-  check-dependencies:
+  check-dependencies-builder:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v5
       # See https://github.com/eclipse-tractusx/sig-infra/tree/main/.github/actions/run-dash for infos
       # about the dash actions and possible config
       - name: Run dash
         id: run-dash
         uses: eclipse-tractusx/sig-infra/.github/actions/run-dash@main
         with:
-          dash_input: "package-lock.json"
-          fail_on_restricted: "true"
+          dash_input: package-lock.json
+          dependencies_file: DEPENDENCIES_FRONTEND
+          fail_on_out_of_date: true
+          fail_on_rejected: true
+          fail_on_restricted: false
