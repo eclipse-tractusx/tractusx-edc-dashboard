@@ -18,7 +18,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # #############################################################################
 ---
-
 name: "Frontend - 3rd Party dependency check (Eclipse Dash)"
 
 on:
@@ -50,3 +49,9 @@ jobs:
           fail_on_out_of_date: true
           fail_on_rejected: true
           fail_on_restricted: false
+      - name: Show dependencies
+        if: failure()
+        shell: bash
+        run: |
+          cat DEPENDENCIES_FRONTEND
+          exit 1
