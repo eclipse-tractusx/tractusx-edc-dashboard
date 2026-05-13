@@ -687,7 +687,7 @@ npm/npmjs/-/strip-json-comments/3.1.1, MIT, approved, clearlydefined
 npm/npmjs/-/supports-color/7.2.0, MIT, approved, clearlydefined
 npm/npmjs/-/supports-color/8.1.1, MIT, approved, clearlydefined
 npm/npmjs/-/supports-preserve-symlinks-flag/1.0.0, MIT, approved, clearlydefined
-npm/npmjs/-/systeminformation/5.31.5, , restricted, clearlydefined
+npm/npmjs/-/systeminformation/5.31.6, , restricted, clearlydefined
 npm/npmjs/-/tagged-tag/1.0.0, MIT, approved, clearlydefined
 npm/npmjs/-/tailwindcss/4.2.2, , restricted, clearlydefined
 npm/npmjs/-/tapable/2.3.2, , restricted, clearlydefined
