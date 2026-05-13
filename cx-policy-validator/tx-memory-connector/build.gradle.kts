@@ -21,13 +21,13 @@ group = "de.fraunhofer.isst.dst.cx.validator"
 version = "0.0.2"
 
 val edcVersion = "0.14.1"
-val txVersion = "0.11.2"
+val txVersion = "0.12.0"
 
 
 plugins {
   java
   application
-  id("com.github.johnrengelman.shadow") version "8.1.1"
+  id("com.gradleup.shadow") version "9.4.1"
 }
 
 repositories {
