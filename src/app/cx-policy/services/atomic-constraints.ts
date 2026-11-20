@@ -147,9 +147,9 @@ export class RightOperands {
     };
   }
 
-  static PfcBase(): RightOperand {
+  static PcfBase(): RightOperand {
     return {
-      name: 'PfcBase',
+      name: 'PcfBase',
       const: 'cx.pcf.base:1',
       operandType: 'string',
       legalText: {
@@ -1078,7 +1078,7 @@ export class AtomicConstraints {
         RightOperands.CoreIndustrycore(),
         RightOperands.CoreQualityNotifications(),
         RightOperands.CoreDigitalTwinRegistry(),
-        RightOperands.PfcBase(),
+        RightOperands.PcfBase(),
         RightOperands.QualityBase(),
         RightOperands.DcmBase(),
         RightOperands.PurisBase(),
